@@ -70,7 +70,20 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
 
     const start = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        const devices = await navigator.mediaDevices.enumerateDevices()
+        const hasVideo = devices.some((d) => d.kind === "videoinput")
+        const hasAudio = devices.some((d) => d.kind === "audioinput")
+
+        const constraints: MediaStreamConstraints = {}
+        if (hasVideo) constraints.video = true
+        if (hasAudio) constraints.audio = true
+
+        if (!hasVideo && !hasAudio) {
+          console.warn("No media devices available")
+          return
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints)
         localStreamRef.current = stream
         setLocalStream(stream)
         stream.getTracks().forEach((track) => peer.addTrack(track, stream))
