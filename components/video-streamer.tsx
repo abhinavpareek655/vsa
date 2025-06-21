@@ -14,9 +14,18 @@ interface VideoStreamerProps {
   onStop: () => void
   isInCall?: boolean
   isUserA?: boolean
+  roomId?: string
+  onEndCall?: () => void
 }
 
-export default function VideoStreamer({ file, onStop, isInCall = false, isUserA = true }: VideoStreamerProps) {
+export default function VideoStreamer({
+  file,
+  onStop,
+  isInCall = false,
+  isUserA = true,
+  roomId = "main-room",
+  onEndCall,
+}: VideoStreamerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -83,14 +92,18 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
       <Card>
         <CardContent className="p-0">
           <div className="relative bg-black rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              className="w-full h-auto max-h-96"
-              onTimeUpdate={handleTimeUpdate}
-              onLoadedMetadata={handleLoadedMetadata}
-              onEnded={() => setIsPlaying(false)}
-            />
+            {videoUrl ? (
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                className="w-full h-auto max-h-96"
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={() => setIsPlaying(false)}
+              />
+            ) : (
+              <div className="w-full h-auto max-h-96 bg-black" />
+            )}
 
             {/* Video Controls Overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
@@ -122,8 +135,8 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
       {isInCall && (
         <FloatingVideoCall
           isUserA={isUserA}
-          roomId="main-room"
-          onEndCall={() => {}}
+          roomId={roomId}
+          onEndCall={onEndCall}
         />
       )}
 
