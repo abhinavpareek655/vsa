@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import useNetworkChannel from "./use-network-channel"
 
 export interface VideoSyncMessage {
   type: "file" | "play" | "pause" | "seek"
@@ -8,12 +9,10 @@ export interface VideoSyncMessage {
 }
 export default function useVideoSync(videoRef: React.RefObject<HTMLVideoElement>) {
   const [remoteVideoUrl, setRemoteVideoUrl] = useState<string | null>(null)
-  const channelRef = useRef<BroadcastChannel | null>(null)
   const idRef = useRef<string>("" + Math.random())
 
-  useEffect(() => {
-    const channel = new BroadcastChannel("video-sync")
-    channelRef.current = channel
+  const { sendMessage } = useNetworkChannel("video-sync", (msg: VideoSyncMessage) => {
+    if (msg.sender === idRef.current) return
 
     channel.onmessage = (event: MessageEvent<VideoSyncMessage>) => {
       const msg = event.data
@@ -41,12 +40,10 @@ export default function useVideoSync(videoRef: React.RefObject<HTMLVideoElement>
           break
       }
     }
-
-    return () => channel.close()
-  }, [videoRef])
+  })
 
   const broadcast = (msg: Omit<VideoSyncMessage, "sender">) => {
-    channelRef.current?.postMessage({ ...msg, sender: idRef.current })
+    sendMessage({ ...msg, sender: idRef.current })
   }
 
   return { broadcast, remoteVideoUrl, setRemoteVideoUrl }
