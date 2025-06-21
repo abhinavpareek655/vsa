@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import useNetworkChannel from "./use-network-channel"
 
 export interface UseWebRTCOptions {
   roomId: string
@@ -11,16 +12,38 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
   const localStreamRef = useRef<MediaStream | null>(null)
   const remoteStreamRef = useRef<MediaStream | null>(null)
   const peerRef = useRef<RTCPeerConnection | null>(null)
-  const channelRef = useRef<BroadcastChannel | null>(null)
 
   const [isConnected, setIsConnected] = useState(false)
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
   const [localStream, setLocalStream] = useState<MediaStream | null>(null)
 
-  useEffect(() => {
-    const channel = new BroadcastChannel(`webrtc-${roomId}`)
-    channelRef.current = channel
+  const { sendMessage } = useNetworkChannel(`webrtc-${roomId}`, async (msg) => {
+    if (!peerRef.current) return
+    switch (msg.type) {
+      case "offer":
+        if (!isInitiator) {
+          await peerRef.current.setRemoteDescription(new RTCSessionDescription(msg.offer))
+          const answer = await peerRef.current.createAnswer()
+          await peerRef.current.setLocalDescription(answer)
+          sendMessage({ type: "answer", answer })
+        }
+        break
+      case "answer":
+        if (isInitiator) {
+          await peerRef.current.setRemoteDescription(new RTCSessionDescription(msg.answer))
+        }
+        break
+      case "candidate":
+        try {
+          await peerRef.current.addIceCandidate(new RTCIceCandidate(msg.candidate))
+        } catch (err) {
+          console.error(err)
+        }
+        break
+    }
+  })
 
+  useEffect(() => {
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     })
@@ -30,10 +53,7 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
 
     peer.onicecandidate = (event) => {
       if (event.candidate) {
-        channel.postMessage({
-          type: "candidate",
-          candidate: event.candidate.toJSON(),
-        })
+        sendMessage({ type: "candidate", candidate: event.candidate.toJSON() })
       }
     }
 
@@ -46,34 +66,6 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
       setIsConnected(true)
     }
 
-    channel.onmessage = async (ev) => {
-      const msg = ev.data
-      if (!peerRef.current) return
-      switch (msg.type) {
-        case "offer":
-          if (!isInitiator) {
-            await peerRef.current.setRemoteDescription(new RTCSessionDescription(msg.offer))
-            const answer = await peerRef.current.createAnswer()
-            await peerRef.current.setLocalDescription(answer)
-            channel.postMessage({ type: "answer", answer })
-          }
-          break
-        case "answer":
-          if (isInitiator) {
-            await peerRef.current.setRemoteDescription(new RTCSessionDescription(msg.answer))
-          }
-          break
-        case "candidate":
-          try {
-            await peerRef.current.addIceCandidate(
-              new RTCIceCandidate(msg.candidate)
-            )
-          } catch (err) {
-            console.error(err)
-          }
-          break
-      }
-    }
 
     const start = async () => {
       try {
@@ -103,7 +95,7 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
         if (isInitiator) {
           const offer = await peer.createOffer()
           await peer.setLocalDescription(offer)
-          channel.postMessage({ type: "offer", offer })
+          sendMessage({ type: "offer", offer })
         }
       } catch (err) {
         console.error("Failed to get user media", err)
@@ -114,7 +106,6 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
 
     return () => {
       cancelled = true
-      channel.close()
       peer.close()
       localStreamRef.current?.getTracks().forEach((t) => t.stop())
       remoteStreamRef.current?.getTracks().forEach((t) => t.stop())
