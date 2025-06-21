@@ -80,10 +80,9 @@ export default function HomePage() {
                 </div>
               </div>
               <Button
-                className="w-full mt-6"
                 size="lg"
                 variant="outline"
-                className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                className="w-full mt-6 bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
               >
                 Join as User B
               </Button>

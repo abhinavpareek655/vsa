@@ -6,7 +6,6 @@ export interface VideoSyncMessage {
   currentTime?: number
   sender?: string
 }
-
 export default function useVideoSync(videoRef: React.RefObject<HTMLVideoElement>) {
   const [remoteVideoUrl, setRemoteVideoUrl] = useState<string>("")
   const channelRef = useRef<BroadcastChannel | null>(null)
