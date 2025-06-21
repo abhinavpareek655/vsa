@@ -26,9 +26,14 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
     })
     peerRef.current = peer
 
+    let cancelled = false
+
     peer.onicecandidate = (event) => {
       if (event.candidate) {
-        channel.postMessage({ type: "candidate", candidate: event.candidate })
+        channel.postMessage({
+          type: "candidate",
+          candidate: event.candidate.toJSON(),
+        })
       }
     }
 
@@ -60,7 +65,9 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
           break
         case "candidate":
           try {
-            await peerRef.current.addIceCandidate(new RTCIceCandidate(msg.candidate))
+            await peerRef.current.addIceCandidate(
+              new RTCIceCandidate(msg.candidate)
+            )
           } catch (err) {
             console.error(err)
           }
@@ -84,9 +91,15 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
         }
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints)
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop())
+          return
+        }
         localStreamRef.current = stream
         setLocalStream(stream)
-        stream.getTracks().forEach((track) => peer.addTrack(track, stream))
+        if (peer.signalingState !== "closed") {
+          stream.getTracks().forEach((track) => peer.addTrack(track, stream))
+        }
         if (isInitiator) {
           const offer = await peer.createOffer()
           await peer.setLocalDescription(offer)
@@ -100,6 +113,7 @@ export default function useWebRTC({ roomId, isInitiator }: UseWebRTCOptions) {
     start()
 
     return () => {
+      cancelled = true
       channel.close()
       peer.close()
       localStreamRef.current?.getTracks().forEach((t) => t.stop())
