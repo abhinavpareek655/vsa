@@ -43,7 +43,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">User A Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Abhinav Dashboard</h1>
           <div className="ml-auto">
             <Button
               onClick={toggleCall}
@@ -124,13 +124,13 @@ export default function UserAPage({ onBack }: UserAPageProps) {
                   <p className="font-medium mb-2">{isInCall ? "Call Active" : "No Active Call"}</p>
                   <p className="text-sm text-gray-600 mb-4">
                     {isInCall
-                      ? "Video call is active. User B's video appears in the streaming window."
-                      : "Start a call to see User B's video overlay."}
+                      ? "Video call is active. Prerna's video appears in the streaming window."
+                      : "Start a call to see Prerna's video overlay."}
                   </p>
                 </div>
                 <div className="text-sm text-gray-500 space-y-2">
-                  <p>• Your video is sent to User B</p>
-                  <p>• User B's video appears as overlay</p>
+                  <p>• Your video is sent to Prerna</p>
+                  <p>• Prerna's video appears as overlay</p>
                   <p>• No local preview shown</p>
                   <p>• Call works alongside streaming</p>
                 </div>

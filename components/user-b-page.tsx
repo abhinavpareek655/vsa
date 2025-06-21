@@ -30,7 +30,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">User B Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Prerna Dashboard</h1>
           <div className="ml-auto">
             <Button
               onClick={toggleCall}
@@ -57,7 +57,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
                 {!isWatching ? (
                   <div className="text-center p-8">
                     <Video className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-6">Watch videos streamed by User A</p>
+                    <p className="text-gray-600 mb-6">Watch videos streamed by Abhinav</p>
                     <Button onClick={startWatching} size="lg" className="w-full bg-green-600 hover:bg-green-700">
                       Start Watching
                     </Button>
@@ -90,13 +90,13 @@ export default function UserBPage({ onBack }: UserBPageProps) {
                   <p className="font-medium mb-2">{isInCall ? "Call Active" : "No Active Call"}</p>
                   <p className="text-sm text-gray-600 mb-4">
                     {isInCall
-                      ? "Video call is active. User A's video appears in the streaming window."
-                      : "Join a call to see User A's video overlay."}
+                      ? "Video call is active. Abhinav's video appears in the streaming window."
+                      : "Join a call to see Abhinav's video overlay."}
                   </p>
                 </div>
                 <div className="text-sm text-gray-500 space-y-2">
-                  <p>• Your video is sent to User A</p>
-                  <p>• User A's video appears as overlay</p>
+                  <p>• Your video is sent to Abhinav</p>
+                  <p>• Abhinav's video appears as overlay</p>
                   <p>• No local preview shown</p>
                   <p>• Call works alongside streaming</p>
                 </div>

@@ -32,7 +32,7 @@ export default function HomePage() {
               <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                 <Upload className="w-8 h-8 text-blue-600" />
               </div>
-              <CardTitle className="text-2xl">User A</CardTitle>
+              <CardTitle className="text-2xl">Abhinav</CardTitle>
               <CardDescription>Upload videos and start video calls</CardDescription>
             </CardHeader>
             <CardContent>
@@ -47,11 +47,11 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 bg-green-500 rounded-full"></span>
-                  <span>See User B during calls</span>
+                  <span>See Prerna during calls</span>
                 </div>
               </div>
               <Button className="w-full mt-6" size="lg">
-                Join as User A
+                Join as Abhinav
               </Button>
             </CardContent>
           </Card>
@@ -61,7 +61,7 @@ export default function HomePage() {
               <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <Video className="w-8 h-8 text-green-600" />
               </div>
-              <CardTitle className="text-2xl">User B</CardTitle>
+              <CardTitle className="text-2xl">Prerna</CardTitle>
               <CardDescription>Watch streams and receive video calls</CardDescription>
             </CardHeader>
             <CardContent>
@@ -76,7 +76,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 bg-blue-500 rounded-full"></span>
-                  <span>See User A during calls</span>
+                  <span>See Abhinav during calls</span>
                 </div>
               </div>
               <Button
@@ -84,7 +84,7 @@ export default function HomePage() {
                 variant="outline"
                 className="w-full mt-6 bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
               >
-                Join as User B
+                Join as Prerna
               </Button>
             </CardContent>
           </Card>

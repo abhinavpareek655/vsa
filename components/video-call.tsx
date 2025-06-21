@@ -66,7 +66,7 @@ export default function VideoCall({ isUserA, onEndCall }: VideoCallProps) {
       {/* Header */}
       <div className="bg-gray-800 p-4 flex items-center justify-between text-white">
         <div>
-          <h2 className="text-lg font-semibold">Video Call - {isUserA ? "User A" : "User B"}</h2>
+          <h2 className="text-lg font-semibold">Video Call - {isUserA ? "Abhinav" : "Prerna"}</h2>
           <p className="text-sm text-gray-300">
             {isConnected ? `Connected • ${formatDuration(callDuration)}` : "Connecting..."}
           </p>
@@ -87,7 +87,7 @@ export default function VideoCall({ isUserA, onEndCall }: VideoCallProps) {
 
               {/* Call info overlay */}
               <div className="absolute top-4 left-4 bg-black/50 rounded-lg px-3 py-2 text-white text-sm">
-                <p>Viewing: {isUserA ? "User B" : "User A"}</p>
+                <p>Viewing: {isUserA ? "Prerna" : "Abhinav"}</p>
                 <p className="text-xs opacity-75">Your video is being sent</p>
               </div>
 
