@@ -31,7 +31,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">User B Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Prerna Dashboard</h1>
           <div className="ml-auto flex items-center gap-2">
             <Button
               onClick={toggleCall}
