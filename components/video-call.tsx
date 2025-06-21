@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { PhoneOff, Mic, MicOff, Video, VideoOff } from "lucide-react"
+import useWebRTC from "@/hooks/use-web-rtc"
 
 interface VideoCallProps {
   isUserA: boolean
@@ -12,46 +13,33 @@ interface VideoCallProps {
 export default function VideoCall({ isUserA, onEndCall }: VideoCallProps) {
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoEnabled, setIsVideoEnabled] = useState(true)
-  const [isConnected, setIsConnected] = useState(false)
   const [callDuration, setCallDuration] = useState(0)
   const localVideoRef = useRef<HTMLVideoElement>(null)
   const remoteVideoRef = useRef<HTMLVideoElement>(null)
+  const { localStream, remoteStream, isConnected } = useWebRTC({
+    roomId: "main-room",
+    isInitiator: isUserA,
+  })
 
   useEffect(() => {
-    // Simulate connection
-    const connectTimer = setTimeout(() => {
-      setIsConnected(true)
-    }, 2000)
+    if (localVideoRef.current && localStream) {
+      localVideoRef.current.srcObject = localStream
+    }
+  }, [localStream])
 
-    // Call duration timer
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteStream) {
+      remoteVideoRef.current.srcObject = remoteStream
+    }
+  }, [remoteStream])
+
+  useEffect(() => {
+    if (!isConnected) return
     const durationTimer = setInterval(() => {
       setCallDuration((prev) => prev + 1)
     }, 1000)
-
-    // Simulate getting user media (for demonstration)
-    const initializeMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        })
-
-        // Note: In real implementation, local video would be sent to peer
-        // but not displayed locally as per requirements
-
-        // For demo purposes, we'll show a placeholder for remote video
-      } catch (error) {
-        console.error("Error accessing media devices:", error)
-      }
-    }
-
-    initializeMedia()
-
-    return () => {
-      clearTimeout(connectTimer)
-      clearInterval(durationTimer)
-    }
-  }, [])
+    return () => clearInterval(durationTimer)
+  }, [isConnected])
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -60,10 +48,16 @@ export default function VideoCall({ isUserA, onEndCall }: VideoCallProps) {
   }
 
   const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((t) => (t.enabled = isMuted))
+    }
     setIsMuted(!isMuted)
   }
 
   const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((t) => (t.enabled = !isVideoEnabled))
+    }
     setIsVideoEnabled(!isVideoEnabled)
   }
 
@@ -86,18 +80,10 @@ export default function VideoCall({ isUserA, onEndCall }: VideoCallProps) {
       {/* Video Area */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-4xl">
-          {isConnected ? (
+          {isConnected && remoteStream ? (
             <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
-              {/* Remote video (what the user sees) */}
-              <div className="w-full h-full bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Video className="w-12 h-12" />
-                  </div>
-                  <p className="text-xl font-medium">{isUserA ? "User B" : "User A"}</p>
-                  <p className="text-sm opacity-75">Remote video stream</p>
-                </div>
-              </div>
+              <video ref={remoteVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+              <video ref={localVideoRef} autoPlay playsInline muted className="hidden" />
 
               {/* Call info overlay */}
               <div className="absolute top-4 left-4 bg-black/50 rounded-lg px-3 py-2 text-white text-sm">
