@@ -91,7 +91,7 @@ export default function VideoViewer({
               <>
                 <video
                   ref={videoRef}
-                  src={remoteVideoUrl}
+                  src={remoteVideoUrl || undefined}
                   className="w-full h-auto max-h-96"
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
