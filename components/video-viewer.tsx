@@ -11,9 +11,17 @@ interface VideoViewerProps {
   onStop: () => void
   isInCall?: boolean
   isUserA?: boolean
+  roomId?: string
+  onEndCall?: () => void
 }
 
-export default function VideoViewer({ onStop, isInCall = false, isUserA = false }: VideoViewerProps) {
+export default function VideoViewer({
+  onStop,
+  isInCall = false,
+  isUserA = false,
+  roomId = "main-room",
+  onEndCall,
+}: VideoViewerProps) {
   const [isConnected, setIsConnected] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -121,8 +129,8 @@ export default function VideoViewer({ onStop, isInCall = false, isUserA = false 
       {isInCall && (
         <FloatingVideoCall
           isUserA={isUserA}
-          roomId="main-room"
-          onEndCall={() => {}}
+          roomId={roomId}
+          onEndCall={onEndCall}
         />
       )}
 
