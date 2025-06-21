@@ -122,7 +122,8 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
       {isInCall && (
         <FloatingVideoCall
           isUserA={isUserA}
-          onEndCall={() => {}} // This will be handled by parent component
+          roomId="main-room"
+          onEndCall={() => {}}
         />
       )}
 
