@@ -16,7 +16,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isStreaming, setIsStreaming] = useState(false)
   const [isInCall, setIsInCall] = useState(false)
-  const [roomId, setRoomId] = useState("")
+  const ROOM_ID = "main-room"
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,12 +33,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
   }
 
   const toggleCall = () => {
-    if (!isInCall) {
-      setRoomId(crypto.randomUUID())
-      setIsInCall(true)
-    } else {
-      setIsInCall(false)
-    }
+    setIsInCall(!isInCall)
   }
 
   return (
@@ -103,7 +98,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
                     onStop={() => setIsStreaming(false)}
                     isInCall={isInCall}
                     isUserA={true}
-                    roomId={roomId}
+                    roomId={ROOM_ID}
                     onEndCall={() => setIsInCall(false)}
                   />
                 )}
@@ -135,11 +130,6 @@ export default function UserAPage({ onBack }: UserAPageProps) {
                       ? "Video call is active. Prerna's video appears in the streaming window."
                       : "Start a call to see Prerna's video overlay."}
                   </p>
-                  {isInCall && (
-                    <p className="text-sm text-gray-800 break-all">
-                      Room ID: <span className="font-mono">{roomId}</span>
-                    </p>
-                  )}
                 </div>
                 <div className="text-sm text-gray-500 space-y-2">
                   <p>• Your video is sent to Prerna</p>
