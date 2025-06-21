@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Play, Pause, Square, Volume2 } from "lucide-react"
 import FloatingVideoCall from "@/components/floating-video-call"
+import useVideoSync from "@/hooks/use-video-sync"
 
 interface VideoStreamerProps {
   file: File
@@ -21,10 +22,16 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
   const [duration, setDuration] = useState(0)
   const [videoUrl, setVideoUrl] = useState<string>("")
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { broadcast } = useVideoSync(videoRef)
 
   useEffect(() => {
     const url = URL.createObjectURL(file)
     setVideoUrl(url)
+    const reader = new FileReader()
+    reader.onload = () => {
+      broadcast({ type: "file", dataUrl: reader.result as string })
+    }
+    reader.readAsDataURL(file)
 
     return () => {
       URL.revokeObjectURL(url)
@@ -35,8 +42,10 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause()
+        broadcast({ type: "pause", currentTime: videoRef.current.currentTime })
       } else {
         videoRef.current.play()
+        broadcast({ type: "play", currentTime: videoRef.current.currentTime })
       }
       setIsPlaying(!isPlaying)
     }
@@ -59,6 +68,7 @@ export default function VideoStreamer({ file, onStop, isInCall = false, isUserA 
     if (videoRef.current) {
       videoRef.current.currentTime = time
       setCurrentTime(time)
+      broadcast({ type: "seek", currentTime: time })
     }
   }
 
