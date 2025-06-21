@@ -29,7 +29,7 @@ export default function VideoStreamer({
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [videoUrl, setVideoUrl] = useState<string>("")
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const { broadcast } = useVideoSync(videoRef)
 
@@ -92,10 +92,10 @@ export default function VideoStreamer({
       <Card>
         <CardContent className="p-0">
           <div className="relative bg-black rounded-lg overflow-hidden">
-            {videoUrl ? (
-              <video
-                ref={videoRef}
-                src={videoUrl}
+              {videoUrl ? (
+                <video
+                  ref={videoRef}
+                  src={videoUrl || undefined}
                 className="w-full h-auto max-h-96"
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
