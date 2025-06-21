@@ -13,18 +13,14 @@ interface UserBPageProps {
 export default function UserBPage({ onBack }: UserBPageProps) {
   const [isWatching, setIsWatching] = useState(false)
   const [isInCall, setIsInCall] = useState(false)
-  const [roomId, setRoomId] = useState("")
+  const ROOM_ID = "main-room"
 
   const startWatching = () => {
     setIsWatching(true)
   }
 
   const toggleCall = () => {
-    if (isInCall) {
-      setIsInCall(false)
-    } else if (roomId.trim()) {
-      setIsInCall(true)
-    }
+    setIsInCall(!isInCall)
   }
 
   return (
@@ -37,13 +33,6 @@ export default function UserBPage({ onBack }: UserBPageProps) {
           </Button>
           <h1 className="text-3xl font-bold text-gray-900">User B Dashboard</h1>
           <div className="ml-auto flex items-center gap-2">
-            <input
-              type="text"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              placeholder="Room ID"
-              className="px-2 py-1 text-sm border border-gray-300 rounded"
-            />
             <Button
               onClick={toggleCall}
               variant={isInCall ? "destructive" : "default"}
@@ -79,7 +68,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
                     onStop={() => setIsWatching(false)}
                     isInCall={isInCall}
                     isUserA={false}
-                    roomId={roomId}
+                    roomId={ROOM_ID}
                     onEndCall={() => setIsInCall(false)}
                   />
                 )}
@@ -111,11 +100,6 @@ export default function UserBPage({ onBack }: UserBPageProps) {
                       ? "Video call is active. Abhinav's video appears in the streaming window."
                       : "Join a call to see Abhinav's video overlay."}
                   </p>
-                  {isInCall && (
-                    <p className="text-sm text-gray-800 break-all">
-                      Room ID: <span className="font-mono">{roomId}</span>
-                    </p>
-                  )}
                 </div>
                 <div className="text-sm text-gray-500 space-y-2">
                   <p>• Your video is sent to Abhinav</p>
