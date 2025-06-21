@@ -121,6 +121,7 @@ export default function VideoViewer({ onStop, isInCall = false, isUserA = false 
       {isInCall && (
         <FloatingVideoCall
           isUserA={isUserA}
+          roomId="main-room"
           onEndCall={() => {}}
         />
       )}

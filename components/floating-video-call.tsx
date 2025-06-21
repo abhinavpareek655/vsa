@@ -1,37 +1,44 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { PhoneOff, Mic, MicOff, Video, VideoOff, Maximize2, Minimize2 } from "lucide-react"
+import useWebRTC from "@/hooks/use-web-rtc"
 
 interface FloatingVideoCallProps {
   isUserA: boolean
+  roomId: string
   onEndCall: () => void
 }
 
-export default function FloatingVideoCall({ isUserA, onEndCall }: FloatingVideoCallProps) {
+export default function FloatingVideoCall({ isUserA, roomId, onEndCall }: FloatingVideoCallProps) {
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoEnabled, setIsVideoEnabled] = useState(true)
-  const [isConnected, setIsConnected] = useState(false)
   const [callDuration, setCallDuration] = useState(0)
+  const localVideoRef = useRef<HTMLVideoElement>(null)
+  const remoteVideoRef = useRef<HTMLVideoElement>(null)
+  const { localStream, remoteStream, isConnected } = useWebRTC({ roomId, isInitiator: isUserA })
   const [isMinimized, setIsMinimized] = useState(false)
 
   useEffect(() => {
-    // Simulate connection
-    const connectTimer = setTimeout(() => {
-      setIsConnected(true)
-    }, 1500)
+    if (localVideoRef.current && localStream) {
+      localVideoRef.current.srcObject = localStream
+    }
+  }, [localStream])
 
-    // Call duration timer
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteStream) {
+      remoteVideoRef.current.srcObject = remoteStream
+    }
+  }, [remoteStream])
+
+  useEffect(() => {
+    if (!isConnected) return
     const durationTimer = setInterval(() => {
       setCallDuration((prev) => prev + 1)
     }, 1000)
-
-    return () => {
-      clearTimeout(connectTimer)
-      clearInterval(durationTimer)
-    }
-  }, [])
+    return () => clearInterval(durationTimer)
+  }, [isConnected])
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -40,10 +47,16 @@ export default function FloatingVideoCall({ isUserA, onEndCall }: FloatingVideoC
   }
 
   const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((t) => (t.enabled = isMuted))
+    }
     setIsMuted(!isMuted)
   }
 
   const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((t) => (t.enabled = !isVideoEnabled))
+    }
     setIsVideoEnabled(!isVideoEnabled)
   }
 
@@ -86,24 +99,8 @@ export default function FloatingVideoCall({ isUserA, onEndCall }: FloatingVideoC
 
       {/* Video Area */}
       <div className={`relative bg-black ${isMinimized ? "h-20" : "h-40"} flex items-center justify-center`}>
-        {isConnected ? (
-          <div className="w-full h-full bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
-            <div className="text-center text-white">
-              <div
-                className={`bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2 ${
-                  isMinimized ? "w-8 h-8" : "w-12 h-12"
-                }`}
-              >
-                <Video className={isMinimized ? "w-4 h-4" : "w-6 h-6"} />
-              </div>
-              {!isMinimized && (
-                <>
-                  <p className="text-sm font-medium">{isUserA ? "User B" : "User A"}</p>
-                  <p className="text-xs opacity-75">Remote video</p>
-                </>
-              )}
-            </div>
-          </div>
+        {isConnected && remoteStream ? (
+          <video ref={remoteVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
         ) : (
           <div className="text-center text-white">
             <div
