@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import useNetworkChannel from "./use-network-channel"
 
 export interface VideoSyncMessage {
