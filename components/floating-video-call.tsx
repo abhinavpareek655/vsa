@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { PhoneOff, Mic, MicOff, Video, VideoOff, Maximize2, Minimize2 } from "lucide-react"
@@ -19,6 +20,8 @@ export default function FloatingVideoCall({ isUserA, roomId, onEndCall }: Floati
   const remoteVideoRef = useRef<HTMLVideoElement>(null)
   const { localStream, remoteStream, isConnected } = useWebRTC({ roomId, isInitiator: isUserA })
   const [isMinimized, setIsMinimized] = useState(false)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const dragStart = useRef<{ x: number; y: number } | null>(null)
 
   useEffect(() => {
     if (localVideoRef.current && localStream) {
@@ -64,11 +67,31 @@ export default function FloatingVideoCall({ isUserA, roomId, onEndCall }: Floati
     setIsMinimized(!isMinimized)
   }
 
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragStart.current) return
+    setPosition({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y })
+  }
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragStart.current = null
+    e.currentTarget.releasePointerCapture(e.pointerId)
+  }
+
   return (
     <div
       className={`absolute top-4 right-4 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 z-50 transition-all duration-300 ${
         isMinimized ? "w-48 h-32" : "w-80 h-60"
       }`}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
     >
       {/* Header */}
       <div className="bg-gray-800 p-2 rounded-t-lg flex items-center justify-between text-white text-sm">
