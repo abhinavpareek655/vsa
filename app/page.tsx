@@ -1,33 +1,32 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { useRouter } from "next/navigation"
 import { Upload, Video, Users } from "lucide-react"
-import UserAPage from "@/components/user-a-page"
-import UserBPage from "@/components/user-b-page"
 
 export default function HomePage() {
-  const [selectedUser, setSelectedUser] = useState<"A" | "B" | null>(null)
-
-  if (selectedUser === "A") {
-    return <UserAPage onBack={() => setSelectedUser(null)} />
-  }
-
-  if (selectedUser === "B") {
-    return <UserBPage onBack={() => setSelectedUser(null)} />
-  }
+  const router = useRouter()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Video Streaming & Call App</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Video Streaming &amp; Call App</h1>
           <p className="text-lg text-gray-600">Choose your role to start streaming or calling</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedUser("A")}>
+          <Card
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => router.push("/Abhinav")}
+          >
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                 <Upload className="w-8 h-8 text-blue-600" />
@@ -56,7 +55,10 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedUser("B")}>
+          <Card
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => router.push("/Prerna")}
+          >
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <Video className="w-8 h-8 text-green-600" />
