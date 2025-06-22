@@ -6,26 +6,14 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Play, Pause, Square, Volume2 } from "lucide-react"
-import FloatingVideoCall from "@/components/floating-video-call"
 import useVideoSync from "@/hooks/use-video-sync"
 
 interface VideoStreamerProps {
   file: File
   onStop: () => void
-  isInCall?: boolean
-  isUserA?: boolean
-  roomId?: string
-  onEndCall?: () => void
 }
 
-export default function VideoStreamer({
-  file,
-  onStop,
-  isInCall = false,
-  isUserA = true,
-  roomId = "main-room",
-  onEndCall,
-}: VideoStreamerProps) {
+export default function VideoStreamer({ file, onStop }: VideoStreamerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -132,13 +120,6 @@ export default function VideoStreamer({
         </CardContent>
       </Card>
 
-      {isInCall && (
-        <FloatingVideoCall
-          isUserA={isUserA}
-          roomId={roomId}
-          onEndCall={onEndCall}
-        />
-      )}
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">
