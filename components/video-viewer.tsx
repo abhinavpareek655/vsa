@@ -20,19 +20,9 @@ import useVideoSync from "@/hooks/use-video-sync"
 
 interface VideoViewerProps {
   onStop: () => void
-  isInCall?: boolean
-  isUserA?: boolean
-  roomId?: string
-  onEndCall?: () => void
 }
 
-export default function VideoViewer({
-  onStop,
-  isInCall = false,
-  isUserA = false,
-  roomId = "main-room",
-  onEndCall,
-}: VideoViewerProps) {
+export default function VideoViewer({ onStop }: VideoViewerProps) {
   const [isConnected, setIsConnected] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -203,13 +193,6 @@ export default function VideoViewer({
         </CardContent>
       </Card>
 
-      {isInCall && (
-        <FloatingVideoCall
-          isUserA={isUserA}
-          roomId={roomId}
-          onEndCall={onEndCall}
-        />
-      )}
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">
