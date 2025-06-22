@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Upload, Video, Phone, PhoneOff } from "lucide-react"
 import VideoStreamer from "@/components/video-streamer"
+import FloatingVideoCall from "@/components/floating-video-call"
 
 interface UserAPageProps {
   onBack: () => void
@@ -37,7 +38,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 relative">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
@@ -93,14 +94,7 @@ export default function UserAPage({ onBack }: UserAPageProps) {
                     )}
                   </>
                 ) : (
-                  <VideoStreamer
-                    file={selectedFile!}
-                    onStop={() => setIsStreaming(false)}
-                    isInCall={isInCall}
-                    isUserA={true}
-                    roomId={ROOM_ID}
-                    onEndCall={() => setIsInCall(false)}
-                  />
+                  <VideoStreamer file={selectedFile!} onStop={() => setIsStreaming(false)} />
                 )}
               </CardContent>
             </Card>
@@ -142,6 +136,13 @@ export default function UserAPage({ onBack }: UserAPageProps) {
           </div>
         </div>
       </div>
+      {isInCall && (
+        <FloatingVideoCall
+          isUserA={true}
+          roomId={ROOM_ID}
+          onEndCall={() => setIsInCall(false)}
+        />
+      )}
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Video, Phone, PhoneOff } from "lucide-react"
 import VideoViewer from "@/components/video-viewer"
+import FloatingVideoCall from "@/components/floating-video-call"
 
 interface UserBPageProps {
   onBack: () => void
@@ -24,7 +25,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4 relative">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
@@ -64,13 +65,7 @@ export default function UserBPage({ onBack }: UserBPageProps) {
                     </Button>
                   </div>
                 ) : (
-                  <VideoViewer
-                    onStop={() => setIsWatching(false)}
-                    isInCall={isInCall}
-                    isUserA={false}
-                    roomId={ROOM_ID}
-                    onEndCall={() => setIsInCall(false)}
-                  />
+                  <VideoViewer onStop={() => setIsWatching(false)} />
                 )}
               </CardContent>
             </Card>
@@ -112,6 +107,13 @@ export default function UserBPage({ onBack }: UserBPageProps) {
           </div>
         </div>
       </div>
+      {isInCall && (
+        <FloatingVideoCall
+          isUserA={false}
+          roomId={ROOM_ID}
+          onEndCall={() => setIsInCall(false)}
+        />
+      )}
     </div>
   )
 }
