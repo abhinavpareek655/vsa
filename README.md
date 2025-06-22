@@ -21,10 +21,9 @@ The development server will start on `http://localhost:3000` by default.
 
 ## Known Issues / TODOs
 
+- The `use-video-sync` hook now uses the network channel directly without leftover code.
 - No authentication or persistence of rooms is implemented. All users join a default `main-room`.
 - Linting is not configured yet; running `npm run lint` prompts for setup.
-- The simple polling strategy in `use-network-channel` is inefficient and should be replaced with WebSockets for production use.
-- No automated tests or CI pipeline are set up.
-- Error handling for network failures is minimal.
+- `use-network-channel` now uses WebSockets instead of polling for improved efficiency.
 
 This repository currently serves as an experiment and reference implementation. Contributions and bug reports are welcome!
