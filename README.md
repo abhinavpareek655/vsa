@@ -21,7 +21,6 @@ The development server will start on `http://localhost:3000` by default.
 
 ## Known Issues / TODOs
 
-- The `use-video-sync` hook still contains leftover code (`channel.onmessage`) which references an undefined variable and likely breaks synchronization.
 - No authentication or persistence of rooms is implemented. All users join a default `main-room`.
 - Linting is not configured yet; running `npm run lint` prompts for setup.
 - The simple polling strategy in `use-network-channel` is inefficient and should be replaced with WebSockets for production use.
